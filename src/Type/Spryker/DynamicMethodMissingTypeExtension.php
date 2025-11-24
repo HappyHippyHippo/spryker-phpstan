@@ -31,7 +31,7 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
     private $cache;
 
     /**
-     * @var string
+     * @var class-string
      */
     protected $className;
 
@@ -43,7 +43,7 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
     /**
      * @param \PHPStan\Reflection\Annotations\AnnotationsMethodsClassReflectionExtension $annotationsMethodsClassReflectionExtension
      * @param \PHPStan\Cache\Cache $cache
-     * @param string $className
+     * @param class-string $className
      * @param string[] $methodNames
      */
     public function __construct(
@@ -59,7 +59,7 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
     }
 
     /**
-     * @return string
+     * @return class-string
      */
     public function getClass(): string
     {
@@ -122,11 +122,24 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
 
         $annotationMethod = $this->annotationsMethodsClassReflectionExtension->getMethod($scope->getClassReflection(), $methodReflection->getName());
 
+        return ParametersAcceptorSelector::selectFromTypes(
+            [$annotationMethod->getSelfOutType()],
+            $annotationMethod->getVariants(),
+            false,
+        )->getReturnType();
+        /*
+        return ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            [],
+            $annotationMethod->getVariants(),
+            $annotationMethod->getNamedArgumentsVariants(),
+        )->getReturnType();
         return ParametersAcceptorSelector::selectSingle($annotationMethod->getVariants())->getReturnType();
+        */
     }
 
     /**
-     * @param string $cacheKey
+     * @param non-empty-string $cacheKey
      * @param string $variableCacheKey
      * @param \PHPStan\Type\Type $value
      *
@@ -138,7 +151,7 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
     }
 
     /**
-     * @param string $cacheKey
+     * @param non-empty-string $cacheKey
      * @param string $variableCacheKey
      *
      * @return \PHPStan\Type\Type|null
@@ -152,7 +165,7 @@ class DynamicMethodMissingTypeExtension implements DynamicMethodReturnTypeExtens
      * @param \PHPStan\Reflection\MethodReflection $methodReflection
      * @param \PHPStan\Analyser\Scope $scope
      *
-     * @return string[]
+     * @return non-empty-string[]
      */
     protected function generateCacheKeys(MethodReflection $methodReflection, Scope $scope): array
     {

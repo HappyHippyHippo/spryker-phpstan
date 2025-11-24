@@ -12,9 +12,6 @@ use PHPUnit\Framework\TestCase;
 
 class DynamicMethodMissingPhpDocAnnotationRuleTest extends TestCase
 {
-    /**
-     * @return void
-     */
     public function testInstance(): void
     {
         $instance = new DynamicMethodMissingPhpDocAnnotationRule('test', []);
